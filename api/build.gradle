@@ -8,14 +8,4 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-publish {
-    artifactId = 'android-backdoorsbdd-annotations'
-    userOrg = 'ignaciotcrespo'
-    groupId = 'com.github.ignaciotcrespo'
-    uploadName = 'Android-Backdoors-BDD-Annotations'
-    publishVersion = '0.0.1'
-    desc = 'Annotations to easily add backdoors for calabash in android projects.'
-    website = 'https://dl.bintray.com/ignaciotcrespo/com.github.ignaciotcrespo.android.backdoorsbdd'
-//    vcsUrl = 'https://opensource.org/licenses/MIT'
-    licences = ['MIT']
-}
+apply from: 'maven-push.gradle'

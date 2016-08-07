@@ -11,11 +11,4 @@ dependencies {
     compile project(':api')
 }
 
-publish {
-    userOrg = 'ignaciotcrespo'
-    groupId = ' com.github.ignaciotcrespo'
-    artifactId = 'android-backdoorsbdd-compile'
-    publishVersion = '0.0.1'
-    desc = 'Annotations to easily add backdoors for calabash in android projects.'
-    website = 'https://dl.bintray.com/ignaciotcrespo/com.github.ignaciotcrespo.android.backdoorsbdd'
-}
+apply from: 'maven-push.gradle'
