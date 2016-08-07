@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by crespo on 05/08/16.
+ * Define a calabash backdoor.
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.METHOD)

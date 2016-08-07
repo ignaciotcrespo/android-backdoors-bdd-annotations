@@ -34,7 +34,7 @@ import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.lang.model.element.Modifier.STATIC;
 
 /**
- * Created by jenzz on 15/02/15.
+ * Process at compile time all backdoor annotations.
  */
 @AutoService(Processor.class)
 public class BackdoorsProcessor extends AbstractProcessor {

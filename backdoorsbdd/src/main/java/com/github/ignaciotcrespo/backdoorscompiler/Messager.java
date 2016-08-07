@@ -8,7 +8,7 @@ import static javax.tools.Diagnostic.Kind.NOTE;
 import static javax.tools.Diagnostic.Kind.WARNING;
 
 /**
- * Created by jenzz on 16/02/15.
+ * Shows messages at compile time.
  */
 final class Messager {
 
