@@ -57,7 +57,7 @@ public class BackdoorsProcessor extends AbstractProcessor {
 
         mBackdoorsClassGenerator.prepareClass(contexts);
 
-        mBackdoorsAnalyzer.processBackdoors(roundEnv);
+        mBackdoorsAnalyzer.processBackdoors(roundEnv, contexts);
 
         mBackdoorsClassGenerator.saveClass(contexts, processingEnv);
 

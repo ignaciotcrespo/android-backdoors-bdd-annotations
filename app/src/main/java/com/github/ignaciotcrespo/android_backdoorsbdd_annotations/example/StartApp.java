@@ -7,6 +7,6 @@ import com.github.ignaciotcrespo.backdoorsapi.BackdoorsContext;
 /**
  * Created by crespo on 07/08/16.
  */
-@BackdoorsContext
+@BackdoorsContext(voidValue = "VOID")
 public class StartApp extends Application {
 }

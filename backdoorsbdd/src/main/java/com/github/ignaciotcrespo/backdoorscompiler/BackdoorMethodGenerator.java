@@ -1,10 +1,14 @@
 package com.github.ignaciotcrespo.backdoorscompiler;
 
+import com.github.ignaciotcrespo.backdoorsapi.BackdoorsContext;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
 
 import java.util.List;
+import java.util.Set;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
@@ -19,7 +23,7 @@ public class BackdoorMethodGenerator {
     public BackdoorMethodGenerator() {
     }
 
-    MethodSpec createBackdoorMethod(ExecutableElement annotatedMtd, String name) {
+    MethodSpec createBackdoorMethod(ExecutableElement annotatedMtd, String name, Set<? extends Element> contexts) {
         StringBuilder statement = new StringBuilder()
                 .append(ClassName.get(annotatedMtd.getEnclosingElement().asType()))
                 .append(".")
@@ -34,7 +38,7 @@ public class BackdoorMethodGenerator {
 
         addModifiers(builder);
 
-        addReturnType(annotatedMtd, statement, builder);
+        addReturnType(annotatedMtd, statement, builder, contexts);
 
         addExceptions(annotatedMtd, builder);
 
@@ -56,13 +60,32 @@ public class BackdoorMethodGenerator {
         }
     }
 
-    void addReturnType(ExecutableElement annotatedMtd, StringBuilder statement, MethodSpec.Builder builder) {
-        builder.returns(ClassName.get(annotatedMtd.getReturnType()));
-        if (annotatedMtd.getReturnType().getKind() != TypeKind.VOID) {
+    void addReturnType(ExecutableElement annotatedMtd, StringBuilder statement, MethodSpec.Builder builder, Set<? extends Element> contexts) {
+        if (returnsSomething(annotatedMtd)) {
+            builder.returns(ClassName.get(annotatedMtd.getReturnType()));
             builder.addStatement("return " + statement);
         } else {
-            builder.addStatement(statement.toString());
+            addReturnVoid(annotatedMtd, statement, builder, contexts);
         }
+    }
+
+    private void addReturnVoid(ExecutableElement annotatedMtd, StringBuilder statement, MethodSpec.Builder builder, Set<? extends Element> contexts) {
+        builder.addStatement(statement.toString());
+        String voidValue = getVoidValue(contexts);
+        if(voidValue.trim().length() > 0) {
+            builder.addStatement("return \"" + voidValue +"\"");
+            builder.returns(TypeName.get(String.class));
+        } else {
+            builder.returns(ClassName.get(annotatedMtd.getReturnType()));
+        }
+    }
+
+    private boolean returnsSomething(ExecutableElement annotatedMtd) {
+        return annotatedMtd.getReturnType().getKind() != TypeKind.VOID;
+    }
+
+    private String getVoidValue(Set<? extends Element> contexts) {
+        return contexts.iterator().next().getAnnotation(BackdoorsContext.class).voidValue();
     }
 
     void checkParameters(ExecutableElement annotatedMtd, StringBuilder statement, MethodSpec.Builder builder) {

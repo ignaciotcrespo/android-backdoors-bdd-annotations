@@ -3,7 +3,8 @@ package com.github.ignaciotcrespo.backdoorscompiler;
 import com.github.ignaciotcrespo.backdoorsapi.Backdoor;
 import com.github.ignaciotcrespo.backdoorsapi.Backdoors;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeSpec;
+
+import java.util.Set;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -23,40 +24,40 @@ public class BackdoorsAnalyzer {
         this.messager = messager;
     }
 
-    void processBackdoors(RoundEnvironment roundEnv) {
-        processSingleBackdoors(roundEnv);
-        processMultipleBackdoors(roundEnv);
+    void processBackdoors(RoundEnvironment roundEnv, Set<? extends Element> contexts) {
+        processSingleBackdoors(roundEnv, contexts);
+        processMultipleBackdoors(roundEnv, contexts);
     }
 
-    void processMultipleBackdoors(RoundEnvironment roundEnv) {
+    void processMultipleBackdoors(RoundEnvironment roundEnv, Set<? extends Element> contexts) {
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(Backdoors.class)) {
 
             // annotation is only allowed on classes, so we can safely cast here
             ExecutableElement annotatedMtd = (ExecutableElement) annotatedElement;
             Backdoors annotation = annotatedMtd.getAnnotation(Backdoors.class);
             for (String name : annotation.value()) {
-                processBackdoor(annotatedMtd, name);
+                processBackdoor(annotatedMtd, name, contexts);
             }
         }
     }
 
-    void processSingleBackdoors(RoundEnvironment roundEnv) {
+    void processSingleBackdoors(RoundEnvironment roundEnv, Set<? extends Element> contexts) {
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(Backdoor.class)) {
 
             // annotation is only allowed on classes, so we can safely cast here
             ExecutableElement annotatedMtd = (ExecutableElement) annotatedElement;
             String name = annotatedMtd.getAnnotation(Backdoor.class).value();
 
-            processBackdoor(annotatedMtd, name);
+            processBackdoor(annotatedMtd, name, contexts);
         }
     }
 
-    void processBackdoor(ExecutableElement annotatedMtd, String name) {
+    void processBackdoor(ExecutableElement annotatedMtd, String name, Set<? extends Element> contexts) {
         mMethodValidator.assertValidMethod(annotatedMtd);
 
         messager.print("creating backdoor: " + name);
 
-        MethodSpec mtd = mBackdoorMethodGenerator.createBackdoorMethod(annotatedMtd, name);
+        MethodSpec mtd = mBackdoorMethodGenerator.createBackdoorMethod(annotatedMtd, name, contexts);
 
         backdoorsClassGenerator.addMethod(mtd);
     }
